@@ -118,24 +118,8 @@
     <h2 class="dropdown-menu__section-heading">My Groups</h2>
     <ul class="dropdown-menu__section">
 
-      <!-- If logged out display must login to view My Groups message. -->
-      <li class="dropdown-community-groups-menu__row dropdown-menu__row--unpadded" ng-if="vm.auth.status === 'logged-out'">
-        <div class="group-item-community-groups">
-          <!-- the group icon !-->
-          <div class="group-list-label__icon--organization">
-          </div>
-          <!-- the group name and share link -->
-          <div class="group-details-community-groups">
-            <a class="group-name-link">
-               You must be logged in to view these.
-            </a>
-          </div>
-        </div>
-      </li>
-
-      <!-- If logged in display groups. -->
       <li class="dropdown-community-groups-menu__row dropdown-menu__row--unpadded"
-          ng-repeat="group in vm.groupOrganizations() track by group.id" ng-if="vm.auth.status === 'logged-in' && group.isMember">
+          ng-repeat="group in vm.groupOrganizations() track by group.id" ng-if="group.isMember">
 
         <!-- Show the group like normal if it is scoped to this page -->
         <div ng-class="{'group-item-community-groups': true, selected: group.id == vm.groups.focused().id}"
@@ -191,6 +175,22 @@
           </div>
         </div>
       </li>
+
+      <!-- If logged out display must login to view My Groups message. -->
+      <li class="dropdown-community-groups-menu__row dropdown-menu__row--unpadded" ng-if="vm.auth.status === 'logged-out'">
+        <div class="group-item-community-groups">
+          <!-- the group icon !-->
+          <div class="group-list-label__icon--organization">
+          </div>
+          <!-- the group name and share link -->
+          <div class="group-details-community-groups">
+            <a class="group-name-link">
+               You must be logged in to view these.
+            </a>
+          </div>
+        </div>
+      </li>
+
     </ul>
 
     <ul class="dropdown-menu__section dropdown-menu__section--no-header">
