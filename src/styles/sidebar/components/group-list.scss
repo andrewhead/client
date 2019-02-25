@@ -9,7 +9,6 @@ $group-list-spacing-below: 50px;
   }
 
   .dropdown-menu {
-    margin-top: 2px;
     width: $group-list-width;
     max-height: 500px;  // fallback for browsers lacking support for vh/calc
     max-height: calc(100vh - #{$top-bar-height} - #{$group-list-spacing-below});
@@ -52,6 +51,28 @@ $group-list-spacing-below: 50px;
   }
 
   .group-item {
+    display: flex;
+    flex-direction: row;
+    flex-grow: 1;
+
+    padding: 10px;
+    cursor: pointer;
+
+    &:hover {
+      .group-name-link {
+        color: $brand-color;
+      }
+    }
+
+    &.selected {
+      .group-name-link {
+        font-size: $body2-font-size;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .group-item-community-groups {
     border: solid 1px transparent;
     display: flex;
     flex-direction: row;
@@ -109,6 +130,10 @@ $group-list-spacing-below: 50px;
   }
 
   .group-details {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+  .group-details-community-groups {
     flex-grow: 1;
     flex-shrink: 1;
     font-weight: 500;
