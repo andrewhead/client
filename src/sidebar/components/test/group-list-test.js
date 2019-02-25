@@ -19,6 +19,7 @@ describe('groupList', function() {
   let fakeAnalytics;
   let fakeServiceUrl;
   let fakeSettings;
+  let fakeFeatures;
 
   before(function() {
     angular
@@ -30,6 +31,9 @@ describe('groupList', function() {
   });
 
   beforeEach(function() {
+    fakeFeatures = {
+      flagEnabled: sinon.stub().returns(false),
+    };
     fakeAnalytics = {
       track: sinon.stub(),
       events: {
@@ -48,6 +52,7 @@ describe('groupList', function() {
       analytics: fakeAnalytics,
       serviceUrl: fakeServiceUrl,
       settings: fakeSettings,
+      features: fakeFeatures,
     });
   });
 
@@ -453,6 +458,19 @@ describe('groupList', function() {
       assert.lengthOf(arrowIcon, 1);
       assert.lengthOf(dropdownMenu, 1);
       assert.lengthOf(dropdownOptions, 2);
+    });
+  });
+
+  [false, true].forEach(isEnabled => {
+    it('returns whether feature flag is enabled', function() {
+      fakeFeatures.flagEnabled.withArgs('community_groups').returns(isEnabled);
+
+      const element = createGroupList();
+
+      const communityGroupsEnabled = element.ctrl.isFeatureFlagEnabled(
+        'community_groups'
+      );
+      assert.isTrue(communityGroupsEnabled === isEnabled);
     });
   });
 });
