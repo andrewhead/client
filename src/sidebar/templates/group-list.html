@@ -91,9 +91,9 @@
     <!-- Display Featured groups section. -->
     <h2 class="dropdown-menu__section-heading">Featured Groups</h2>
     <ul class="dropdown-menu__section">
-      <li class="dropdown-menu__row dropdown-menu__row--unpadded"
+      <li class="dropdown-community-groups-menu__row dropdown-menu__row--unpadded"
           ng-repeat="group in vm.groupOrganizations() track by group.id" ng-if="!group.isMember">
-        <div ng-class="{'group-item': true, selected: group.id == vm.groups.focused().id}"
+        <div ng-class="{'group-item-community-groups': true, selected: group.id == vm.groups.focused().id}"
              ng-click="vm.focusGroup(group.id)" tabindex="0">
           <!-- the group icon !-->
           <div class="group-menu-icon-container">
@@ -103,7 +103,7 @@
               ng-if="group.logo">
           </div>
         <!-- the group name and share link !-->
-        <div class="group-details">
+        <div class="group-details-community-groups">
           <a class="group-name-link"
              href=""
              title="{{ group.type === 'private' ? 'Show and create annotations in ' + group.name : 'Show public annotations'  }}">
@@ -119,13 +119,13 @@
     <ul class="dropdown-menu__section">
 
       <!-- If logged out display must login to view My Groups message. -->
-      <li class="dropdown-menu__row dropdown-menu__row--unpadded" ng-if="vm.auth.status === 'logged-out'">
-        <div class="group-item">
+      <li class="dropdown-community-groups-menu__row dropdown-menu__row--unpadded" ng-if="vm.auth.status === 'logged-out'">
+        <div class="group-item-community-groups">
           <!-- the group icon !-->
           <div class="group-list-label__icon--organization">
           </div>
           <!-- the group name and share link -->
-          <div class="group-details">
+          <div class="group-details-community-groups">
             <a class="group-name-link">
                You must be logged in to view these.
             </a>
@@ -134,11 +134,11 @@
       </li>
 
       <!-- If logged in display groups. -->
-      <li class="dropdown-menu__row dropdown-menu__row--unpadded"
+      <li class="dropdown-community-groups-menu__row dropdown-menu__row--unpadded"
           ng-repeat="group in vm.groupOrganizations() track by group.id" ng-if="vm.auth.status === 'logged-in' && group.isMember">
 
         <!-- Show the group like normal if it is scoped to this page -->
-        <div ng-class="{'group-item': true, selected: group.id == vm.groups.focused().id}"
+        <div ng-class="{'group-item-community-groups': true, selected: group.id == vm.groups.focused().id}"
              ng-click="vm.focusGroup(group.id)" tabindex="0" ng-if="group.isScopedToUri">
           <!-- the group icon !-->
           <div class="group-menu-icon-container">
@@ -148,7 +148,7 @@
               ng-if="group.logo">
           </div>
           <!-- the group name and share link -->
-          <div class="group-details">
+          <div class="group-details-community-groups">
             <a class="group-name-link"
                href=""
                title="{{ group.type === 'private' ? 'Show and create annotations in ' + group.name : 'Show public annotations'  }}">
@@ -159,7 +159,7 @@
 
         <!-- Show the group as not selectable if it is not scoped to this page !-->
         <div class="group-item--out-of-scope"
-             ng-class="{'group-item': true, selected: group.id == vm.groups.focused().id}"
+             ng-class="{'group-item-community-groups': true, selected: group.id == vm.groups.focused().id}"
              ng-click="vm.toggleGroupDetails()" tabindex="0"  ng-if="!group.isScopedToUri">
           <!-- the group icon !-->
           <div class="group-menu-icon-container">
@@ -169,7 +169,7 @@
               ng-if="group.logo">
           </div>
           <!-- the group name and share link !-->
-          <div class="group-details" id="group-details-out-of-scope">
+          <div class="group-details-community-groups" id="group-details-out-of-scope">
             <svg class="svg-icon group__icon--unavailable" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24">
               <path fill="none" d="M0 0h24v24H0V0z"/>
               <path d="M11 15h2v2h-2zm0-8h2v6h-2zm.99-5C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
@@ -194,10 +194,10 @@
     </ul>
 
     <ul class="dropdown-menu__section dropdown-menu__section--no-header">
-      <li ng-if="vm.auth.status === 'logged-in' && !vm.isThirdPartyUser()" class="dropdown-menu__row dropdown-menu__row--unpadded new-group-btn">
-        <div class="group-item" ng-click="vm.createNewGroup()" tabindex="0">
+      <li ng-if="vm.auth.status === 'logged-in' && !vm.isThirdPartyUser()" class="dropdown-community-groups-menu__row dropdown-menu__row--unpadded new-group-btn">
+        <div class="group-item-community-groups" ng-click="vm.createNewGroup()" tabindex="0">
           <div class="group-icon-container"><i class="h-icon-add"></i></div>
-          <div class="group-details">
+          <div class="group-details-community-groups">
             New private group
           </div>
         </div>
