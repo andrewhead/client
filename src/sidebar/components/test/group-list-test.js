@@ -75,6 +75,7 @@ describe('groupList', function() {
   let fakeAnalytics;
   let fakeServiceUrl;
   let fakeSettings;
+  let fakeFeatures;
 
   before(function() {
     angular
@@ -86,6 +87,10 @@ describe('groupList', function() {
   });
 
   beforeEach(function() {
+    fakeFeatures = {
+      flagEnabled: sinon.stub().returns(false),
+    };
+
     fakeAnalytics = {
       track: sinon.stub(),
       events: {
@@ -104,6 +109,7 @@ describe('groupList', function() {
       analytics: fakeAnalytics,
       serviceUrl: fakeServiceUrl,
       settings: fakeSettings,
+      features: fakeFeatures,
     });
   });
 
@@ -455,6 +461,57 @@ describe('groupList', function() {
       assert.lengthOf(arrowIcon, 1);
       assert.lengthOf(dropdownMenu, 1);
       assert.lengthOf(dropdownOptions, 2);
+    });
+
+    it('is shown when community_groups feature flag is on and there are multiple groups', function() {
+      fakeFeatures.flagEnabled.withArgs('community_groups').returns(true);
+      groups = [PUBLIC_GROUP, OPEN_GROUP];
+
+      const element = createGroupList();
+
+      const showGroupsMenu = element.ctrl.showGroupsMenu();
+      const dropdownToggle = element.find('.dropdown-toggle');
+      const arrowIcon = element.find('.h-icon-arrow-drop-down');
+      const dropdownMenu = element.find('.dropdown-menu__top-arrow');
+      const dropdownOptions = element.find('.dropdown-menu__row ');
+
+      assert.isTrue(showGroupsMenu);
+      assert.lengthOf(dropdownToggle, 1);
+      assert.lengthOf(arrowIcon, 1);
+      assert.lengthOf(dropdownMenu, 1);
+      assert.lengthOf(dropdownOptions, 3);
+    });
+
+    it('is not shown when community_groups feature flag is on and there is only one group', function() {
+      fakeFeatures.flagEnabled.withArgs('community_groups').returns(true);
+      groups = [PRIVATE_GROUP];
+
+      const element = createGroupList();
+
+      const showGroupsMenu = element.ctrl.showGroupsMenu();
+      const dropdownToggle = element.find('.dropdown-toggle');
+      const arrowIcon = element.find('.h-icon-arrow-drop-down');
+      const dropdownMenu = element.find('.dropdown-menu__top-arrow');
+      const dropdownOptions = element.find('.dropdown-menu__row ');
+
+      assert.isFalse(showGroupsMenu);
+      assert.lengthOf(dropdownToggle, 0);
+      assert.lengthOf(arrowIcon, 0);
+      assert.lengthOf(dropdownMenu, 0);
+      assert.lengthOf(dropdownOptions, 0);
+    });
+  });
+
+  [false, true].forEach(isEnabled => {
+    it('returns whether feature flag is enabled', function() {
+      fakeFeatures.flagEnabled.withArgs('community_groups').returns(isEnabled);
+
+      const element = createGroupList();
+
+      const communityGroupsEnabled = element.ctrl.isFeatureFlagEnabled(
+        'community_groups'
+      );
+      assert.isTrue(communityGroupsEnabled === isEnabled);
     });
   });
 });

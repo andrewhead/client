@@ -7,7 +7,14 @@ const memoize = require('../util/memoize');
 const groupOrganizations = memoize(require('../util/group-organizations'));
 
 // @ngInject
-function GroupListController($window, analytics, groups, settings, serviceUrl) {
+function GroupListController(
+  $window,
+  analytics,
+  groups,
+  settings,
+  serviceUrl,
+  features
+) {
   this.groups = groups;
 
   this.createNewGroup = function() {
@@ -78,7 +85,15 @@ function GroupListController($window, analytics, groups, settings, serviceUrl) {
   this.isThirdPartyService = isThirdPartyService(settings);
 
   this.showGroupsMenu = () => {
-    return !(this.isThirdPartyService && this.groups.all().length <= 1);
+    if (features.flagEnabled('community_groups')) {
+      return this.groups.all().length > 1;
+    } else {
+      return !(this.isThirdPartyService && this.groups.all().length <= 1);
+    }
+  };
+
+  this.isFeatureFlagEnabled = flag => {
+    return features.flagEnabled(flag);
   };
 }
 
