@@ -96,7 +96,20 @@ function GroupListController(
   this.isThirdPartyService = isThirdPartyService(settings);
 
   this.showGroupsMenu = () => {
-    return !(this.isThirdPartyService && this.groups.all().length <= 1);
+    if (features.flagEnabled("community_groups")) {
+        return this.groups.all().length > 1;
+    }
+    else {
+        return !(this.isThirdPartyService && this.groups.all().length <= 1);
+    }
+  };
+
+  this.showMyGroups = () => {
+    return this.groups.all().filter(group => group.isMember).length > 0;
+  };
+
+  this.showFeaturedGroups = () => {
+    return this.groups.all().filter(group => !group.isMember).length > 0;
   };
 
   this.isFeatureFlagEnabled = flag => {

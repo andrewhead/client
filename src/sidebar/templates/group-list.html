@@ -89,8 +89,8 @@
   <div class="dropdown-menu" role="menu" ng-if="vm.showGroupsMenu() && vm.isFeatureFlagEnabled('community_groups')">
 
     <!-- Display Featured groups section. -->
-    <h2 class="dropdown-menu__section-heading">Featured Groups</h2>
-    <ul class="dropdown-menu__section">
+    <h2 class="dropdown-menu__section-heading" ng-if="vm.showFeaturedGroups()">Featured Groups</h2>
+    <ul class="dropdown-menu__section" ng-if="vm.showFeaturedGroups()">
       <li class="dropdown-community-groups-menu__row dropdown-menu__row--unpadded"
           ng-repeat="group in vm.groupOrganizations() track by group.id" ng-if="!group.isMember">
         <div ng-class="{'group-item-community-groups': true, selected: group.id == vm.groups.focused().id}"
@@ -114,9 +114,9 @@
     </ul>
 
 
-    <!-- Display My Groups groups section. -->
-    <h2 class="dropdown-menu__section-heading">My Groups</h2>
-    <ul class="dropdown-menu__section">
+    <!-- Display My Groups groups section if user is logged in. -->
+    <h2 class="dropdown-menu__section-heading" ng-if="vm.auth.status === 'logged-in' && vm.showMyGroups() ">My Groups</h2>
+    <ul class="dropdown-menu__section" ng-if="vm.auth.status === 'logged-in' && vm.showMyGroups()">
 
       <li class="dropdown-community-groups-menu__row dropdown-menu__row--unpadded"
           ng-repeat="group in vm.groupOrganizations() track by group.id" ng-if="group.isMember">
