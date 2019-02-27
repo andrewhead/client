@@ -13,6 +13,7 @@ function GroupListController(
   groups,
   settings,
   serviceUrl,
+  store,
   features
 ) {
   this.groups = groups;
@@ -90,6 +91,32 @@ function GroupListController(
     } else {
       return !(this.isThirdPartyService && this.groups.all().length <= 1);
     }
+  };
+
+  this.showCurrentlyViewing = () => {
+    return (
+      !this.isLoggedIn() &&
+      this.groups.all().filter(group => group.isMember || !group.isScopedToUri)
+        .length > 0
+    );
+  };
+
+  this.showMyGroups = () => {
+    return (
+      this.isLoggedIn() &&
+      this.groups.all().filter(group => group.isMember).length > 0
+    );
+  };
+
+  this.showFeaturedGroups = () => {
+    return (
+      this.groups.all().filter(group => !group.isMember && group.isScopedToUri)
+        .length > 0
+    );
+  };
+
+  this.isLoggedIn = () => {
+    return store.profile().userid !== null;
   };
 
   this.isFeatureFlagEnabled = flag => {

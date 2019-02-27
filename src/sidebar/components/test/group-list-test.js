@@ -46,6 +46,18 @@ describe('groupList', function() {
     isScopedToUri: false,
   };
 
+  const RESTRICTED_UNSCOPED_MEMBER_GROUP = {
+    id: 'restricted',
+    links: {
+      html: 'https://hypothes.is/groups/restricto',
+    },
+    name: 'Restricted',
+    organization: groupFixtures.defaultOrganization(),
+    type: 'restricted',
+    isMember: true,
+    isScopedToUri: false,
+  };
+
   const OPEN_GROUP = {
     id: 'open',
     links: {
@@ -75,6 +87,7 @@ describe('groupList', function() {
   let fakeAnalytics;
   let fakeServiceUrl;
   let fakeSettings;
+  let fakeStore;
   let fakeFeatures;
 
   before(function() {
@@ -89,6 +102,10 @@ describe('groupList', function() {
   beforeEach(function() {
     fakeFeatures = {
       flagEnabled: sinon.stub().returns(false),
+    };
+
+    fakeStore = {
+      profile: sinon.stub().returns({ userid: 'userid' }),
     };
 
     fakeAnalytics = {
@@ -109,6 +126,7 @@ describe('groupList', function() {
       analytics: fakeAnalytics,
       serviceUrl: fakeServiceUrl,
       settings: fakeSettings,
+      store: fakeStore,
       features: fakeFeatures,
     });
   });
@@ -512,6 +530,124 @@ describe('groupList', function() {
         'community_groups'
       );
       assert.isTrue(communityGroupsEnabled === isEnabled);
+    });
+  });
+
+  [
+    {
+      description:
+        'If logged in and there is a restricted group of which the user is not a member show it in `Featured Groups`.',
+      isLoggedIn: true,
+      filtered_groups: [RESTRICTED_GROUP],
+      expectedShowFeatured: true,
+    },
+    {
+      description:
+        'If logged in and there is an open group show it in `Featured Groups`.',
+      isLoggedIn: true,
+      filtered_groups: [OPEN_GROUP],
+      expectedShowFeatured: true,
+    },
+    {
+      description:
+        'If logged in and there are only groups with membership do not show `Featured Groups`.',
+      isLoggedIn: true,
+      filtered_groups: [PUBLIC_GROUP],
+      expectedShowFeatured: false,
+    },
+    {
+      description:
+        'If logged out and there is a restricted group scoped to the page show it in `Featured Groups`.',
+      isLoggedIn: false,
+      filtered_groups: [RESTRICTED_GROUP],
+      expectedShowFeatured: true,
+    },
+    {
+      description:
+        'If logged out and there is an open group show it in `Featured Groups`.',
+      isLoggedIn: false,
+      filtered_groups: [OPEN_GROUP],
+      expectedShowFeatured: true,
+    },
+  ].forEach(
+    ({ description, isLoggedIn, filtered_groups, expectedShowFeatured }) => {
+      it(description, function() {
+        fakeStore.profile = () => {
+          return { userid: isLoggedIn ? 'userid' : null };
+        };
+        groups = filtered_groups;
+
+        const element = createGroupList();
+        const showFeaturedGroups = element.ctrl.showFeaturedGroups();
+        const showCurrentlyViewing = element.ctrl.showCurrentlyViewing();
+
+        assert.isTrue(showFeaturedGroups === expectedShowFeatured);
+        assert.isTrue(showCurrentlyViewing === false);
+      });
+    }
+  );
+
+  [
+    {
+      description:
+        'If logged in and the user is a member of the unscoped group show it in `My Groups`',
+      isLoggedIn: true,
+      filtered_groups: [RESTRICTED_UNSCOPED_MEMBER_GROUP],
+      expectedShowMyGroups: true,
+    },
+    {
+      description:
+        'If logged in and the user is a member of the group show it in `My Groups`',
+      isLoggedIn: true,
+      filtered_groups: [PUBLIC_GROUP],
+      expectedShowMyGroups: true,
+    },
+  ].forEach(
+    ({ description, isLoggedIn, filtered_groups, expectedShowMyGroups }) => {
+      it(description, function() {
+        fakeStore.profile = () => {
+          return { userid: isLoggedIn ? 'userid' : null };
+        };
+        groups = filtered_groups;
+
+        const element = createGroupList();
+        const showMyGroups = element.ctrl.showMyGroups();
+        const showCurrentlyViewing = element.ctrl.showCurrentlyViewing();
+
+        assert.isTrue(showMyGroups === expectedShowMyGroups);
+        assert.isTrue(showCurrentlyViewing === false);
+      });
+    }
+  );
+
+  [
+    {
+      description:
+        'If logged out and there is a restricted group not scoped to the page, show restricted group in `Currently Viewing`',
+      isLoggedIn: false,
+      filtered_groups: [RESTRICTED_UNSCOPED_GROUP],
+    },
+    {
+      description:
+        'If logged out and only the Public group is present, show it in `Currently Viewing`',
+      isLoggedIn: false,
+      filtered_groups: [PUBLIC_GROUP],
+    },
+  ].forEach(({ description, isLoggedIn, filtered_groups }) => {
+    it(description, function() {
+      fakeStore.profile = () => {
+        return { userid: isLoggedIn ? 'userid' : null };
+      };
+      groups = filtered_groups;
+
+      const element = createGroupList();
+      const showCurrentlyViewing = element.ctrl.showCurrentlyViewing();
+      const showMyGroups = element.ctrl.showMyGroups();
+      const showFeaturedGroups = element.ctrl.showFeaturedGroups();
+
+      assert.isTrue(showCurrentlyViewing === true);
+      assert.isTrue(showFeaturedGroups === false);
+      assert.isTrue(showMyGroups === false);
     });
   });
 });
