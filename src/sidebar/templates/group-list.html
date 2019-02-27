@@ -88,6 +88,28 @@
   <!-- Show new menu if community_groups feature flag is enabled. -->
   <div class="dropdown-menu" role="menu" ng-if="vm.showGroupsMenu() && vm.isFeatureFlagEnabled('community_groups')">
 
+    <!-- Display Currently Viewing. -->
+    <h2 class="dropdown-menu__section-heading dropdown-menu__section-heading--current" ng-if="vm.auth.status === 'logged-out' && vm.showCurrentlyViewing()">Currently Viewing</h2>
+    <ul class="dropdown-menu__section dropdown-menu__section--current" ng-if="vm.auth.status === 'logged-out' && vm.showCurrentlyViewing()">
+      <li class="dropdown-community-groups-menu__row dropdown-menu__row--unpadded">
+        <div ng-class="{'group-item-community-groups': true}"
+             ng-click="vm.focusGroup(vm.groups.focused().id)" tabindex="0">
+          <div class="group-menu-icon-container">
+            <img class="group-list-label__icon group-list-label__icon--organization"
+              alt="{{ vm.orgName(vm.groups.focused().id) }}"
+              ng-src="{{ vm.groups.focused().logo }}"
+              ng-if="group.logo">
+          </div>
+        <!-- the group name and share link !-->
+        <div class="group-details-community-groups">
+          <a class="group-name-link"
+             href=""
+             title="{{ vm.groups.focused().type === 'private' ? 'Show and create annotations in ' + vm.groups.focused().name : 'Show public annotations'  }}">
+             {{vm.groups.focused().name}}
+          </a>
+        </div>
+      </li>
+    </ul>
     <!-- Display Featured groups section. -->
     <h2 class="dropdown-menu__section-heading" ng-if="vm.showFeaturedGroups()">Featured Groups</h2>
     <ul class="dropdown-menu__section" ng-if="vm.showFeaturedGroups()">

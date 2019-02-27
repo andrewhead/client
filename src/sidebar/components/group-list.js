@@ -104,6 +104,10 @@ function GroupListController(
     }
   };
 
+  this.showCurrentlyViewing = () => {
+    return this.groups.all().filter(group => group.isMember).length > 0;
+  };
+
   this.showMyGroups = () => {
     return this.groups.all().filter(group => group.isMember).length > 0;
   };
