@@ -128,7 +128,9 @@ describe('groups', function() {
       },
     };
     fakeServiceUrl = sandbox.stub();
-    fakeSettings = {};
+    fakeSettings = {
+      apiUrl: 'https://anno.tate/api/',
+    };
   });
 
   afterEach(function() {
@@ -284,8 +286,10 @@ describe('groups', function() {
         })
       );
       return svc.load().then(groups => {
-        assert.isObject(groups[0].organization);
-        assert.hasAllKeys(groups[0].organization, ['id', 'logo']);
+        assert.deepEqual(groups[0].organization, {
+          id: '__default__',
+          logo: 'https://anno.tate/organizations/__default__/logo',
+        });
       });
     });
 

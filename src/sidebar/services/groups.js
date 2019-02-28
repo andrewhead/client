@@ -3,18 +3,11 @@
 const STORAGE_KEY = 'hypothesis.groups.focus';
 const DEFAULT_ORG_ID = '__default__';
 
-/**
- * FIXME: There is almost assuredly a better way to handle a fallback, default logo
- */
-const DEFAULT_ORGANIZATION = {
-  id: DEFAULT_ORG_ID,
-  logo: 'https://hypothes.is/organizations/__default__/logo',
-};
-
 const events = require('../events');
 const { awaitStateChange } = require('../util/state-util');
 const { combineGroups } = require('../util/groups');
 const serviceConfig = require('../service-config');
+const { resolve } = require('../util/url-util');
 
 // @ngInject
 function groups(
@@ -31,6 +24,11 @@ function groups(
 ) {
   const svc = serviceConfig(settings);
   const authority = svc ? svc.authority : null;
+
+  const defaultOrganization = {
+    id: DEFAULT_ORG_ID,
+    logo: resolve(`/organizations/${DEFAULT_ORG_ID}/logo`, settings.apiUrl),
+  };
 
   function getDocumentUriForGroupSearch() {
     function mainUri() {
@@ -115,7 +113,7 @@ function groups(
   function injectOrganizations(groups) {
     groups.forEach(group => {
       if (!group.organization || typeof group.organization !== 'object') {
-        group.organization = DEFAULT_ORGANIZATION;
+        group.organization = defaultOrganization;
       }
     });
   }
